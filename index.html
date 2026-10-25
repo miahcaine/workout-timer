@@ -68,17 +68,26 @@ svg{display:block}
 .restrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 10px 8px 12px;border-radius:14px;border:1px dashed var(--line)}
 .restrow .isecs.off{color:var(--muted);font-size:20px}
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.iv{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 10px 10px 12px;
-  display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"sw name x" "dur dur order";gap:8px 10px;align-items:center}
-.swatch{grid-area:sw;width:30px;height:30px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--c);background:var(--c);padding:0}
-.iname{grid-area:name;min-width:0;width:100%;border:0;background:transparent;font-weight:600;font-size:17px;padding:6px 0;border-radius:0}
+.iv{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 10px 10px 12px;display:flex;flex-direction:column;gap:8px}
+.ivrow{display:flex;align-items:center;gap:10px}
+.ivrow.wrap{flex-wrap:wrap;gap:8px 10px}
+.swatch{flex:none;width:30px;height:30px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--c);background:var(--c);padding:0}
+.iname{flex:1;min-width:0;width:100%;border:0;background:transparent;font-weight:600;font-size:17px;padding:6px 0;border-radius:0}
 .iname:focus{outline:none;box-shadow:inset 0 -2px var(--accent)}
-.x{grid-area:x}
-.dur{grid-area:dur;justify-self:start;display:flex;align-items:center;background:var(--field);border-radius:11px;border:1px solid var(--line)}
+.x{flex:none}
+.dur{display:flex;align-items:center;background:var(--field);border-radius:11px;border:1px solid var(--line)}
 .dur button{width:42px;height:42px;border:0;background:transparent;font-size:20px;color:var(--muted)}
-.isecs{width:70px;text-align:center;border:0;background:transparent;font:800 24px/1 var(--display);font-variant-numeric:tabular-nums;padding:6px 0}
-.isecs:focus{outline:none;color:var(--accent)}
-.order{grid-area:order;display:flex;gap:6px;justify-self:end}
+.isecs,.ireps,.dur output{width:70px;text-align:center;border:0;background:transparent;font:800 24px/1 var(--display);font-variant-numeric:tabular-nums;padding:6px 0}
+.ireps{width:48px}
+.isecs:focus,.ireps:focus{outline:none;color:var(--accent)}
+.unit{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dur.sm button{width:34px;height:36px;font-size:18px}
+.dur.sm .isecs,.dur.sm output{width:52px;font-size:20px}
+.seg{display:flex;background:var(--field);border:1px solid var(--line);border-radius:11px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:0 13px;height:36px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.field{display:flex;align-items:center;gap:8px}
+.order{display:flex;gap:6px;margin-left:auto}
 .ghost{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:transparent;display:grid;place-items:center;color:var(--muted)}
 .ghost:disabled{opacity:.3;cursor:default}
 .add{border:1.5px dashed var(--line);background:transparent;border-radius:14px;padding:15px;font-weight:600;color:var(--muted)}
@@ -104,7 +113,9 @@ svg{display:block}
 .pos{display:flex;flex-direction:column;align-items:center;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-variant-numeric:tabular-nums;opacity:.9;text-align:center}
 .run-mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px;min-height:0}
 .cur-name{font:800 clamp(34px,10vw,60px)/1 var(--display);text-transform:uppercase;letter-spacing:.01em;text-wrap:balance;max-width:100%;overflow-wrap:anywhere;text-shadow:0 2px 16px rgba(0,0,0,.25)}
+.set-line{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.92}
 .clock{font:800 clamp(128px,44vw,240px)/.88 var(--display);font-variant-numeric:tabular-nums;text-shadow:0 4px 30px rgba(0,0,0,.22)}
+.clock-unit{font:800 28px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
 .run.paused .clock{opacity:.55}
 .remain{font-size:14px;font-weight:600;opacity:.9;font-variant-numeric:tabular-nums}
 .next{align-self:center;background:rgba(0,0,0,.3);border-radius:999px;padding:11px 18px;font-weight:600;font-size:15px;margin-bottom:20px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -173,7 +184,7 @@ svg{display:block}
     </div>
     <ol class="list" id="list"></ol>
     <button class="add" id="addBtn">+ Add interval</button>
-    <p class="hint">Tap a dot to change its color. Type 90 or 130 for 1:30.</p>
+    <p class="hint">Tap a dot to change its color. Type 90 or 130 for 1:30.<br>Reps intervals wait for you to tap Done.</p>
     <div class="rowactions">
       <button class="link" id="dupBtn">Duplicate routine</button>
       <button class="link" id="delBtn">Delete routine</button>
@@ -195,7 +206,9 @@ svg{display:block}
     </div>
     <div class="run-mid" id="runMid">
       <div class="cur-name" id="curName"></div>
+      <div class="set-line" id="setLine" hidden></div>
       <div class="clock" id="clock">0:00</div>
+      <div class="clock-unit" id="clockUnit" hidden>Reps</div>
       <div class="remain" id="remain"></div>
     </div>
     <div class="next" id="next"></div>
@@ -231,8 +244,12 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
              set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
-const mk=(name,rounds,ivs,rest=0)=>({id:uid(),name,rounds,rest,intervals:ivs.map(([n,s,c])=>({id:uid(),name:n,secs:s,color:c}))});
+/* interval: {name,color,mode:'time'|'reps',secs,reps,sets,setRest} */
+const norm=v=>Object.assign({mode:'time',secs:30,reps:10,sets:1,setRest:30},v);
+const mk=(name,rounds,ivs,rest=0)=>({id:uid(),name,rounds,rest,intervals:ivs.map(([n,s,c,x])=>norm(Object.assign({id:uid(),name:n,secs:s,color:c},x||{})))});
 const SAMPLES=()=>[
+  mk('Upper body sets',1,[['Push-ups',30,'c1',{mode:'reps',reps:12,sets:3,setRest:45}],['Dumbbell rows',30,'c2',{mode:'reps',reps:10,sets:3,setRest:45}],
+    ['Plank',45,'c3',{sets:2,setRest:30}]]),
   mk('Morning stretch',1,[['Neck rolls',30,'c4'],['Shoulder circles',30,'c4'],['Cat-cow',45,'c1'],["Child's pose",45,'c5'],
     ['Hamstring stretch, left',40,'c1'],['Hamstring stretch, right',40,'c1'],['Hip flexor, left',40,'c2'],['Hip flexor, right',40,'c2'],
     ['Figure four, left',45,'c3'],['Figure four, right',45,'c3']]),
@@ -242,6 +259,7 @@ const SAMPLES=()=>[
 
 let data=store.get('ideck.data',null);
 if(!data||!Array.isArray(data.routines)||!data.routines.length){const r=SAMPLES();data={routines:r,current:r[0].id}}
+data.routines.forEach(r=>{r.intervals=r.intervals.map(norm)});
 let settings=Object.assign({beep:true,lead:true},store.get('ideck.settings',{}));
 const save=()=>store.set('ideck.data',data);
 const saveSettings=()=>store.set('ideck.settings',settings);
@@ -253,7 +271,13 @@ const parse=str=>{str=String(str).trim();let s;
   if(str.includes(':')){const [m,x]=str.split(':');s=(parseInt(m,10)||0)*60+(parseInt(x,10)||0)}
   else{const d=str.replace(/\D/g,'');if(!d)return null;s=d.length<=2?+d:(+d.slice(0,-2))*60+(+d.slice(-2))}
   return Math.min(5999,Math.max(1,s))};
-const totalOf=r=>r.intervals.reduce((a,b)=>a+b.secs,0)*r.rounds+(r.rest||0)*(r.rounds-1);
+/* Timed portion only; reps take as long as they take */
+const ivSecs=v=>(v.mode==='reps'?0:v.secs*v.sets)+(v.sets>1?v.setRest*(v.sets-1):0);
+const totalOf=r=>r.intervals.reduce((a,v)=>a+ivSecs(v),0)*r.rounds+(r.rest||0)*(r.rounds-1);
+const hasReps=r=>r.intervals.some(v=>v.mode==='reps');
+const totalLabel=r=>fmt(totalOf(r))+(hasReps(r)?' + reps':'');
+const ICO={up:'<path d="M12 19V5M6 11l6-6 6 6"/>',down:'<path d="M12 5v14M6 13l6 6 6-6"/>'};
+const arrow=(k,lab,dis)=>`<button class="ghost" data-m="${k==='up'?-1:1}" aria-label="${lab}" ${dis?'disabled':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg></button>`;
 
 /* ---------- Editor ---------- */
 function renderTabs(){
@@ -262,26 +286,42 @@ function renderTabs(){
 }
 function renderList(){
   const r=cur(),n=r.intervals.length;
-  $('list').innerHTML=r.intervals.map((iv,i)=>`
+  $('list').innerHTML=r.intervals.map((iv,i)=>{const reps=iv.mode==='reps';return`
     <li class="iv" data-id="${iv.id}">
-      <button class="swatch" style="--c:var(--${iv.color})" aria-label="Change color"></button>
-      <input class="iname" id="n-${iv.id}" value="${esc(iv.name)}" placeholder="Interval name" aria-label="Interval name" autocomplete="off" enterkeyhint="done">
-      <button class="ghost x" aria-label="Delete interval" ${n<2?'disabled':''}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-      <div class="dur">
-        <button data-d="-5" aria-label="5 seconds less">−</button>
-        <input class="isecs" id="d-${iv.id}" inputmode="numeric" value="${fmt(iv.secs)}" aria-label="Duration in minutes and seconds">
-        <button data-d="5" aria-label="5 seconds more">+</button>
+      <div class="ivrow">
+        <button class="swatch" style="--c:var(--${iv.color})" aria-label="Change color"></button>
+        <input class="iname" id="n-${iv.id}" value="${esc(iv.name)}" placeholder="Interval name" aria-label="Interval name" autocomplete="off" enterkeyhint="done">
+        <button class="ghost x" aria-label="Delete interval" ${n<2?'disabled':''}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
-      <div class="order">
-        <button class="ghost" data-m="-1" aria-label="Move up" ${i===0?'disabled':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
-        <button class="ghost" data-m="1" aria-label="Move down" ${i===n-1?'disabled':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+      <div class="ivrow wrap">
+        <div class="seg" role="group" aria-label="Interval type">
+          <button data-mode="time" aria-pressed="${!reps}">Time</button><button data-mode="reps" aria-pressed="${reps}">Reps</button>
+        </div>
+        ${reps?`<div class="dur">
+          <button data-r="-1" aria-label="One fewer rep">−</button>
+          <input class="ireps" id="r-${iv.id}" inputmode="numeric" value="${iv.reps}" aria-label="Reps"><span class="unit">reps</span>
+          <button data-r="1" aria-label="One more rep">+</button>
+        </div>`:`<div class="dur">
+          <button data-d="-5" aria-label="5 seconds less">−</button>
+          <input class="isecs" id="d-${iv.id}" inputmode="numeric" value="${fmt(iv.secs)}" aria-label="Duration in minutes and seconds">
+          <button data-d="5" aria-label="5 seconds more">+</button>
+        </div>`}
       </div>
-    </li>`).join('');
+      <div class="ivrow wrap">
+        <div class="field"><span class="lbl">Sets</span>
+          <div class="dur sm"><button data-s="-1" aria-label="One fewer set">−</button><output>${iv.sets}</output><button data-s="1" aria-label="One more set">+</button></div>
+        </div>
+        ${iv.sets>1?`<div class="field"><span class="lbl">Rest</span>
+          <div class="dur sm"><button data-sr="-15" aria-label="15 seconds less rest between sets">−</button><input class="isecs isrest" id="sr-${iv.id}" inputmode="numeric" value="${iv.setRest?fmt(iv.setRest):'Off'}" aria-label="Rest between sets"><button data-sr="15" aria-label="15 seconds more rest between sets">+</button></div>
+        </div>`:''}
+        <div class="order">${arrow('up','Move up',i===0)}${arrow('down','Move down',i===n-1)}</div>
+      </div>
+    </li>`}).join('');
 }
 function renderMeta(){
   const r=cur();$('rCount').textContent=r.rounds;
   $('restRow').hidden=r.rounds<2;const ri=$('restIn');if(document.activeElement!==ri){ri.value=r.rest?fmt(r.rest):'Off';ri.classList.toggle('off',!r.rest)}
-  const t=fmt(totalOf(r));$('total').textContent=t;$('startTotal').textContent=t;
+  const t=totalLabel(r);$('total').textContent=t;$('startTotal').textContent=t;
 }
 function renderAll(){const r=cur();$('rName').value=r.name;renderTabs();renderList();renderMeta();disarm($('delBtn'),'Delete routine')}
 
@@ -302,7 +342,7 @@ $('restIn').addEventListener('change',e=>{const r=cur(),v=e.target.value.trim();
 $('restIn').addEventListener('blur',renderMeta);
 $('restIn').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});
 $('addBtn').onclick=()=>{const r=cur(),last=r.intervals[r.intervals.length-1];
-  const iv={id:uid(),name:'',secs:last?last.secs:30,color:last?last.color:'c1'};r.intervals.push(iv);save();renderList();renderMeta();
+  const iv=norm(last?Object.assign({},last,{id:uid(),name:''}):{id:uid(),name:'',color:'c1'});r.intervals.push(iv);save();renderList();renderMeta();
   const el=$('n-'+iv.id);el.focus();el.scrollIntoView({block:'center'})};
 
 const list=$('list');
@@ -312,15 +352,26 @@ list.addEventListener('click',e=>{
   if(b.classList.contains('swatch')){iv.color=COLORS[(COLORS.indexOf(iv.color)+1)%COLORS.length];b.style.setProperty('--c',`var(--${iv.color})`);save();return}
   if(b.classList.contains('x')){r.intervals.splice(i,1);save();renderList();renderMeta();return}
   if(b.dataset.d){iv.secs=Math.min(5999,Math.max(5,iv.secs+ +b.dataset.d));$('d-'+iv.id).value=fmt(iv.secs);save();renderMeta();return}
+  if(b.dataset.r){iv.reps=Math.min(999,Math.max(1,iv.reps+ +b.dataset.r));$('r-'+iv.id).value=iv.reps;save();return}
+  if(b.dataset.sr){iv.setRest=Math.min(5999,Math.max(0,iv.setRest+ +b.dataset.sr));$('sr-'+iv.id).value=iv.setRest?fmt(iv.setRest):'Off';save();renderMeta();return}
+  const refocus=sel=>{renderList();renderMeta();const nb=list.querySelector(`[data-id="${iv.id}"] ${sel}`);if(nb&&!nb.disabled)nb.focus()};
+  if(b.dataset.mode){if(iv.mode!==b.dataset.mode){iv.mode=b.dataset.mode;save();refocus(`[data-mode="${iv.mode}"]`)}return}
+  if(b.dataset.s){const s=Math.min(20,Math.max(1,iv.sets+ +b.dataset.s));if(s!==iv.sets){iv.sets=s;save();refocus(`[data-s="${b.dataset.s}"]`)}return}
   if(b.dataset.m){const j=i+ +b.dataset.m;[r.intervals[i],r.intervals[j]]=[r.intervals[j],r.intervals[i]];save();renderList();
     const nb=list.querySelector(`[data-id="${iv.id}"] [data-m="${b.dataset.m}"]`);if(nb&&!nb.disabled)nb.focus();}
 });
 list.addEventListener('input',e=>{if(!e.target.classList.contains('iname'))return;
   const iv=cur().intervals.find(v=>v.id===e.target.closest('.iv').dataset.id);iv.name=e.target.value;save()});
-list.addEventListener('focusin',e=>{if(e.target.classList.contains('isecs'))setTimeout(()=>e.target.select(),0)});
-list.addEventListener('change',e=>{if(!e.target.classList.contains('isecs'))return;
-  const iv=cur().intervals.find(v=>v.id===e.target.closest('.iv').dataset.id),s=parse(e.target.value);
-  if(s)iv.secs=s;e.target.value=fmt(iv.secs);save();renderMeta()});
+list.addEventListener('focusin',e=>{const t=e.target;if(t.classList.contains('isrest')&&t.value==='Off')t.value='';
+  if(t.classList.contains('isecs')||t.classList.contains('ireps'))setTimeout(()=>t.select(),0)});
+list.addEventListener('change',e=>{const t=e.target,li=t.closest('.iv');if(!li)return;
+  const iv=cur().intervals.find(v=>v.id===li.dataset.id);
+  if(t.classList.contains('isrest')){const v=t.value.trim();iv.setRest=(v===''||/^0+(:0+)?$/.test(v))?0:(parse(v)||iv.setRest);t.value=iv.setRest?fmt(iv.setRest):'Off'}
+  else if(t.classList.contains('isecs')){const s=parse(t.value);if(s)iv.secs=s;t.value=fmt(iv.secs)}
+  else if(t.classList.contains('ireps')){const n=parseInt(t.value.replace(/\D/g,''),10);if(n)iv.reps=Math.min(999,n);t.value=iv.reps}
+  else return;
+  save();renderMeta()});
+list.addEventListener('focusout',e=>{const t=e.target;if(t.classList.contains('isrest')&&t.value.trim()===''){const iv=cur().intervals.find(v=>v.id===t.closest('.iv').dataset.id);t.value=iv.setRest?fmt(iv.setRest):'Off'}});
 list.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT')e.target.blur()});
 $('rName').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur()});
 
@@ -363,9 +414,15 @@ function syncSound(){const on=settings.beep;$('soundIcon').innerHTML=on?ICON_ON:
 let run=null,raf=0,iv=0;
 function plan(r){const steps=[];
   if(settings.lead)steps.push({name:'Get ready',secs:5,color:'lead',lead:true,round:1,idx:0});
-  for(let k=1;k<=r.rounds;k++){r.intervals.forEach((v,i)=>steps.push({name:v.name.trim()||`Interval ${i+1}`,secs:v.secs,color:v.color,round:k,idx:i+1}));
+  for(let k=1;k<=r.rounds;k++){
+    r.intervals.forEach((v,i)=>{const name=v.name.trim()||`Interval ${i+1}`;
+      for(let s=1;s<=v.sets;s++){
+        steps.push({name,secs:v.mode==='reps'?0:v.secs,reps:v.mode==='reps'?v.reps:0,color:v.color,round:k,idx:i+1,set:s,sets:v.sets});
+        if(s<v.sets&&v.setRest>0)steps.push({name:'Rest',secs:v.setRest,color:'c4',setRest:true,round:k,idx:i+1,set:s+1,sets:v.sets,of:name})}});
     if(k<r.rounds&&r.rest>0)steps.push({name:'Rest',secs:r.rest,color:'c4',between:true,round:k,idx:0})}
   return steps}
+const CHECK='<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const stepTag=s=>s.reps?`× ${s.reps}`:fmt(s.secs);
 function startRun(){
   const r=cur();if(!r.intervals.length)return;
   unlockAudio();holdWake();
@@ -375,42 +432,60 @@ function startRun(){
   go(0);loop();
 }
 function go(i){run.i=i;const s=run.steps[i];run.cue=null;
-  if(run.paused)run.remain=s.secs*1000;else run.endAt=Date.now()+s.secs*1000;
+  if(s.reps){run.stepStart=Date.now();run.paused=false}
+  else if(run.paused)run.remain=s.secs*1000;else run.endAt=Date.now()+s.secs*1000;
   enter();}
 function enter(){const s=run.steps[run.i],n=run.r.intervals.length;
   $('run').style.setProperty('--c',`var(--${s.color})`);
   $('curName').textContent=s.name;
+  const sl=$('setLine');sl.hidden=!(s.sets>1);
+  if(s.sets>1)sl.textContent=s.setRest?`Next: set ${s.set} of ${s.sets}`:`Set ${s.set} of ${s.sets}`;
+  $('clockUnit').hidden=!s.reps;
   $('posRound').textContent=s.lead?'Get ready':(run.r.rounds>1?`Round ${s.round} of ${run.r.rounds}`:run.r.name);
   $('posStep').textContent=s.lead?'':s.between?'Between rounds':`${s.idx} / ${n}`;
   const nx=run.steps[run.i+1];
-  $('next').innerHTML=nx?`<b>${nx.round!==s.round&&!s.lead?'Round '+nx.round:'Next'}</b>${esc(nx.name)} · ${fmt(nx.secs)}`:'<b>Last one</b>Finish strong';
-  if(!s.lead)tone(s.between?523:988,.32);
+  const nxSet=nx&&nx.sets>1&&!nx.setRest?` · set ${nx.set}/${nx.sets}`:'';
+  $('next').innerHTML=nx?`<b>${nx.round!==s.round&&!s.lead?'Round '+nx.round:'Next'}</b>${esc(nx.name)} · ${stepTag(nx)}${nxSet}`:'<b>Last one</b>Finish strong';
+  if(!s.lead)tone(s.between||s.setRest?523:988,.32);
   draw();}
 function remaining(){return run.paused?run.remain:run.endAt-Date.now()}
 function tick(){
   if(!run||run.done)return;
-  if(!run.paused){
+  if(!run.paused&&!run.steps[run.i].reps){
     let rem=run.endAt-Date.now(),moved=false;
     while(rem<=0){
       if(run.i>=run.steps.length-1){finish();return}
-      run.i++;run.endAt+=run.steps[run.i].secs*1000;rem=run.endAt-Date.now();moved=true;run.cue=null}
+      run.i++;moved=true;run.cue=null;
+      const n=run.steps[run.i];
+      if(n.reps){run.stepStart=run.endAt;break}   // a reps step waits for Done
+      run.endAt+=n.secs*1000;rem=run.endAt-Date.now()}
     if(moved){enter();return}
     const sec=Math.ceil(rem/1000),s=run.steps[run.i];
     if(sec<=3&&sec>=1&&sec!==run.cue&&s.secs>3){run.cue=sec;tone(660,.14)}
   }
   draw();}
 function draw(){
-  const s=run.steps[run.i],rem=Math.max(0,remaining());
+  const s=run.steps[run.i];
+  let left=0,repsLeft=false;
+  for(let k=run.i+1;k<run.steps.length;k++){left+=run.steps[k].secs;if(run.steps[k].reps)repsLeft=true}
+  const leftTxt=k=>`${fmt(Math.ceil(k))}${repsLeft?' + reps':''} left`;
+  if(s.reps){
+    $('clock').textContent=s.reps;
+    $('fill').style.transform='scaleY(1)';
+    $('remain').textContent=`${fmt((Date.now()-run.stepStart)/1000)} on this set · ${leftTxt(left)}`;
+    $('playBtn').innerHTML=CHECK;$('playBtn').setAttribute('aria-label','Done, next');
+    $('run').classList.remove('paused');return}
+  const rem=Math.max(0,remaining());
   $('clock').textContent=fmt(Math.ceil(rem/1000));
   $('fill').style.transform=`scaleY(${Math.min(1,rem/(s.secs*1000)).toFixed(4)})`;
-  let left=rem/1000;for(let k=run.i+1;k<run.steps.length;k++)left+=run.steps[k].secs;
-  $('remain').textContent=`${fmt(Math.ceil(left))} left`;
+  $('remain').textContent=leftTxt(left+rem/1000);
   $('playBtn').innerHTML=run.paused?PLAY:PAUSE;$('playBtn').setAttribute('aria-label',run.paused?'Resume':'Pause');
   $('run').classList.toggle('paused',run.paused);}
+function advance(){if(!run||run.done)return;unlockAudio();if(run.i>=run.steps.length-1){finish();return}go(run.i+1)}
 function loop(){cancelAnimationFrame(raf);clearInterval(iv);
   const f=()=>{tick();if(run&&!run.done)raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f);
   iv=setInterval(tick,250);}
-function togglePause(){if(!run||run.done)return;unlockAudio();
+function togglePause(){if(!run||run.done)return;if(run.steps[run.i].reps){advance();return}unlockAudio();
   if(run.paused){run.endAt=Date.now()+run.remain;run.paused=false;holdWake()}else{run.remain=run.endAt-Date.now();run.paused=true}
   draw();}
 function finish(){run.done=true;cancelAnimationFrame(raf);clearInterval(iv);dropWake();
@@ -418,14 +493,16 @@ function finish(){run.done=true;cancelAnimationFrame(raf);clearInterval(iv);drop
   $('run').style.setProperty('--c','var(--c4)');$('fill').style.transform='scaleY(1)';
   ['runMid','next','ctrls'].forEach(id=>$(id).hidden=true);$('donePanel').hidden=false;
   $('posRound').textContent=run.r.name;$('posStep').textContent='';
-  const r=run.r;$('doneText').textContent=`${r.rounds>1?r.rounds+' rounds of ':''}${r.intervals.length} intervals in ${fmt((Date.now()-run.started)/1000)}`;}
+  const r=run.r,sets=run.steps.filter(s=>!s.lead&&!s.between&&!s.setRest).length;
+  $('setLine').hidden=true;
+  $('doneText').textContent=`${r.rounds>1?r.rounds+' rounds · ':''}${sets} ${sets===1?'set':'sets'} in ${fmt((Date.now()-run.started)/1000)}`;}
 function closeRun(){if(run)run.done=true;cancelAnimationFrame(raf);clearInterval(iv);dropWake();
   run=null;$('run').hidden=true;$('startBtn').focus()}
 
 $('startBtn').onclick=startRun;
 $('playBtn').onclick=togglePause;
-$('skipBtn').onclick=()=>{if(!run||run.done)return;unlockAudio();if(run.i>=run.steps.length-1){finish();return}go(run.i+1)};
-$('prevBtn').onclick=()=>{if(!run||run.done)return;unlockAudio();const s=run.steps[run.i],elapsed=s.secs*1000-remaining();
+$('skipBtn').onclick=advance;
+$('prevBtn').onclick=()=>{if(!run||run.done)return;unlockAudio();const s=run.steps[run.i],elapsed=s.reps?Date.now()-run.stepStart:s.secs*1000-remaining();
   go(elapsed>3000||run.i===0?run.i:run.i-1)};
 $('endBtn').onclick=e=>arm(e.currentTarget,'End?',closeRun);
 $('soundBtn').onclick=()=>{settings.beep=!settings.beep;saveSettings();syncSound();if(settings.beep)unlockAudio()};
